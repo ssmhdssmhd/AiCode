@@ -150,6 +150,7 @@ internal enum class SettingsSection(@param:StringRes val titleRes: Int) {
     Storage(R.string.settings_storage),
     TokenStats(R.string.settings_token_stats_title),
     Backup(R.string.settings_backup),
+    GitHub(R.string.settings_github),
     About(R.string.settings_about)
 }
 
@@ -864,6 +865,9 @@ fun SettingsScreen(
                 SettingsSection.SkillEditor -> {} // 已在上方 early return 处理
                 SettingsSection.SubAgentEditor -> {} // 已在上方 early return 处理
                 SettingsSection.RemoteServers -> {} // 已在上方 early return 处理
+                SettingsSection.GitHub -> com.aicode.feature.github.presentation.GitHubScreen(
+                    onNavigateBack = { section = SettingsSection.Menu }
+                )
                 SettingsSection.About -> AboutSection(
                     updateCheckEnabled = updateCheckEnabled,
                     updateCheckChannel = updateCheckChannel,
@@ -1291,6 +1295,12 @@ internal fun SettingsMenu(
                 icon = FeatherIcons.Save,
                 title = stringResource(SettingsSection.Backup.titleRes),
                 onClick = { onOpen(SettingsSection.Backup) }
+            )
+            SettingsDivider()
+            SettingsRow(
+                icon = FeatherIcons.GitBranch,
+                title = stringResource(SettingsSection.GitHub.titleRes),
+                onClick = { onOpen(SettingsSection.GitHub) }
             )
             SettingsDivider()
             SettingsRow(

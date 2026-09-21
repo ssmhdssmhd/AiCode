@@ -88,6 +88,44 @@ class GitRepository @Inject constructor(
     /** 在当前工作区初始化 git 仓库（`git init`）。据退出码判成败，失败抛 [GitCommandFailureException]。 */
     suspend fun initRepo(): String = gitChecked("init")
 
+    /**
+     * 克隆远程仓库到指定目录（`git clone <url> [<dir>]`）。
+     * [directory] 为空时 git 自动按仓库名创建子目录；非空时作为 clone 的目标目录名。
+     * 凭据由 credential.helper 链自动注入——若 URL 是 https 且 host 有匹配凭据，git 会直接用；
+     * 否则弹出交互提示（Android 端 helper 会触发 CredentialRequestBridge 弹窗）。
+     * clone 的 cwd 强制为 workspace 根目录（当前工作区可能是一个子目录）。
+     */
+    suspend fun clone(url: String, directory: String? = null): String {
+        val args = mutableListOf("clone", url)
+        if (!directory.isNullOrBlank()) args.add(directory)
+        return gitCheckedIn(workspaceRepository.currentPath(), *args.toTypedArray())
+    }
+
+    /**
+     * 在非当前工作目录执行一条 `git` 写子命令，据退出码判成败。
+     * 与 [gitChecked] 相同但 cwd 是显式传入而非 workspaceRepository.currentPath()。
+     * clone 需要在父目录下执行（目标目录尚不存在），故单独提供。
+     */
+    private suspend fun gitCheckedIn(cwd: String, vararg args: String): String {
+        val result = engine.runCommandSyncUnbounded(buildGitCommand(args), cwd)
+        if (result.exitCode == 0) return result.output
+        throw GitCommandFailureException(result.output.ifBlank { "git 退出码 ${result.exitCode}" })
+    }
+
+    /** `git remote add <name> <url>`。失败抛 [GitCommandFailureException]。 */
+    suspend fun remoteAdd(name: String, url: String): String = gitChecked("remote", "add", name, url)
+
+    /** `git remote remove <name>`。失败抛 [GitCommandFailureException]。 */
+    suspend fun remoteRemove(name: String): String = gitChecked("remote", "remove", name)
+
+    /** `git fetch [remote]`。拉取远程 refs 到本地，但不合并到工作区。 */
+    suspend fun fetch(remote: String? = null): String =
+        if (remote != null) gitChecked("fetch", remote) else gitChecked("fetch")
+
+    /** 当前 workspace 父目录路径（供 clone 到新子目录时作 cwd）。 */
+    fun parentPath(): String = java.io.File(workspaceRepository.currentPath()).parentFile?.absolutePath
+        ?: workspaceRepository.currentPath()
+
     /** 是否已配置至少一个远程仓库（`git remote` 输出非空）。拉取/推送前据此门控。 */
     suspend fun hasRemote(): Boolean = git("remote").trim().isNotEmpty()
 

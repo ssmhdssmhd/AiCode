@@ -378,6 +378,8 @@ dependencies {
 
     // Core Android
     implementation("androidx.core:core:1.16.0")
+    // Security Crypto — EncryptedSharedPreferences 持久化 GitHub token
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
     // AppCompat — 提供 AppCompatDelegate.setApplicationLocales 实现 per-app 语言切换
     implementation("androidx.appcompat:appcompat:1.7.0")
 

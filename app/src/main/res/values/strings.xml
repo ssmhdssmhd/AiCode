@@ -1350,3 +1350,17 @@
     <string name="onboarding_demo_model_choose_desc">当前推荐 · 具备代码生成与分析能力</string>
     <string name="onboarding_simulated_badge">演示预览</string>
 </resources>
+
+    <!-- GitHub 集成 -->
+    <string name="github_title">GitHub 集成</string>
+    <string name="github_auth_subtitle">连接你的 GitHub 账户，一键浏览和克隆仓库</string>
+    <string name="github_token_label">Personal Access Token</string>
+    <string name="github_token_hint">前往 github.com/settings/tokens 生成一个带 repo scope 的 token 粘贴到这里。Token 会用 Android Keystore 加密存储，不会明文保存。</string>
+    <string name="github_connect">连接 GitHub</string>
+    <string name="github_logout">断开连接</string>
+    <string name="github_retry">重试</string>
+    <string name="github_empty">没有找到仓库</string>
+    <string name="github_clone">克隆</string>
+    <string name="github_search_hint">搜索仓库名或描述…</string>
+    <string name="settings_github">GitHub 集成</string>
+    <string name="chat_open_github">打开 GitHub</string>
